@@ -1,5 +1,3 @@
-import configparser
-
 import pandas as pd
 import requests
 import streamlit as st
@@ -7,12 +5,9 @@ import streamlit as st
 """
 These APIs make requests to Covalent Unified XY=K endpoints and transforms the data to user's needs.
 """
-configParser = configparser.RawConfigParser()
-configFilePath = 'config/prod.cfg'
-configParser.read(configFilePath)
 
 covalent_xyk_api = 'https://api.covalenthq.com/v1'
-payload = {'key': f'{configParser.get("blocklook", "covalent-apikey")}'}
+payload = {'key': st.secrets.blocklook.covalent_apikey}
 
 
 def __pretty_print_df(df):
