@@ -6,7 +6,7 @@ from datetime import timedelta
 
 import streamlit as st
 
-from analytics.api import get_unique_chains, get_dexes_on_chain, get_30days_volume_liquidity
+from api import get_unique_chains, get_dexes_on_chain, get_30days_volume_liquidity
 
 with st.container():
     st.markdown(f'<h1><br>Decentralised Exchange (DEX) <br> Trade Analysis</h1> <hr/>',
