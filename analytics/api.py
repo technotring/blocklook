@@ -41,8 +41,11 @@ def __get_chain_id(chain_name):
 @st.cache
 def __get_xyk_ecosystem(chain_name, dex_name):
     chain_id = __get_chain_id(chain_name)
-    xyk_ecosystem_json = requests.get(f'{covalent_xyk_api}/{chain_id}/xy=k/{dex_name}/ecosystem/', payload).json()
-    return xyk_ecosystem_json
+    response = requests.get(f'{covalent_xyk_api}/{chain_id}/xy=k/{dex_name}/ecosystem/', payload)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return pd.DataFrame()
 
 
 @st.cache
@@ -63,8 +66,11 @@ def get_30days_volume_liquidity(chain_id, dex_name):
     xyk_eco_json = __get_xyk_ecosystem(chain_id, dex_name)
     volume_30d_df = pd.json_normalize(xyk_eco_json, ['data', 'items', 'volume_chart_30d'])
     liquidity_30d_df = pd.json_normalize(xyk_eco_json, ['data', 'items', 'liquidity_chart_30d'])
-    merged_7days_result = pd.merge(volume_30d_df, liquidity_30d_df, "inner",
-                                   ['dt', 'chain_id', 'dex_name', 'quote_currency'])
-    merged_7days_result['date'] = pd.to_datetime(merged_7days_result['dt']).dt.date
-    result = merged_7days_result[['date', 'swap_count_24', 'volume_quote', 'liquidity_quote']]
-    return result
+    if volume_30d_df.empty or liquidity_30d_df.empty:
+        return pd.DataFrame()
+    else:
+        merged_7days_result = pd.merge(volume_30d_df, liquidity_30d_df, "inner",
+                                       ['dt', 'chain_id', 'dex_name', 'quote_currency'])
+        merged_7days_result['date'] = pd.to_datetime(merged_7days_result['dt']).dt.date
+        result = merged_7days_result[['date', 'swap_count_24', 'volume_quote', 'liquidity_quote']]
+        return result
