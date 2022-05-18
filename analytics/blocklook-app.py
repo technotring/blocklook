@@ -1,24 +1,47 @@
 """
-# My first app
-Here's our first attempt at using data to create a table:
+Data Application showing Decentralised Exchange Data.
 """
+
+from datetime import timedelta
 
 import streamlit as st
 
-from analytics.api import get_unique_chains, get_dexes_on_chain, get_7days_volume_liquidity
+from analytics.api import get_unique_chains, get_dexes_on_chain, get_30days_volume_liquidity
 
-chainOption = st.selectbox(
-    'Chain',
-    get_unique_chains())
+with st.container():
+    st.markdown(f'<h1><br>Decentralised Exchange (DEX) <br> Trade Analysis</h1> <hr/>',
+                unsafe_allow_html=True)
+    row1_1, row1_2 = st.columns((1, 1))
+    with row1_1:
+        chainOption = st.selectbox(
+            'Chain',
+            get_unique_chains())
+    with row1_2:
+        dexOption = st.selectbox(
+            'Decentralised Exchange (DEX)',
+            get_dexes_on_chain(chainOption))
 
-'Your Selected Chain: ', chainOption
-
-dexOption = st.selectbox(
-    'DEX',
-    get_dexes_on_chain(chainOption))
-
-'Your selected DEX: ', dexOption
-
-volume_liquidity_7days_df = get_7days_volume_liquidity(chainOption, dexOption)
-
-st.area_chart(volume_liquidity_7days_df, width=500, height=500)
+with st.container():
+    st.markdown(f'<h2>On {chainOption} - {dexOption}</h2>', unsafe_allow_html=True)
+    xyk_pool_df = get_30days_volume_liquidity(chainOption, dexOption)
+    start_date, end_date = st.select_slider(
+        'Date range',
+        options=xyk_pool_df[['date']],
+        value=(xyk_pool_df['date'].max() - timedelta(days=6), xyk_pool_df['date'].max()))
+    with st.container():
+        st.markdown(
+            f'<h3>{(end_date - start_date).days + 1} days trading '
+            f'(from {start_date:%B %d, %Y} to {end_date:%B %d, %Y})</h3> ',
+            unsafe_allow_html=True)
+        filtered_df = xyk_pool_df[
+            (xyk_pool_df['date'] >= start_date) & (xyk_pool_df['date'] <= end_date)] \
+            .set_index('date')
+        with st.container():
+            st.markdown(f'<h4>Swaps</h4> ', unsafe_allow_html=True)
+            st.line_chart(filtered_df[['swap_count_24']])
+        with st.container():
+            st.markdown(f'<h4>Liquidity vs Volume</h4> ', unsafe_allow_html=True)
+            st.area_chart(filtered_df[['volume_quote', 'liquidity_quote']])
+        with st.container():
+            st.markdown(f'<h4>Exchange Pool Dataset</h4> ', unsafe_allow_html=True)
+            st.dataframe(filtered_df.reset_index().style.highlight_max(axis=0))
