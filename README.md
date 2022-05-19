@@ -2,7 +2,7 @@
 ---
 BlockLook data app enables users to look at swaps, volumes and liquidity on DEX's over a custom date range.
 
-First, we built API's to get DEX data from Covalent unified APIs (XY=K endpoints). Second, we transformed the data into widgets to see swaps made by supported DEX's on multiple blockchains, their liquidity pool and volume.
+First, we built APIs to get DEX data from Covalent using their unified APIs (XY=K endpoints). Second, we transformed the data into widgets to see swaps made by supported DEX's on multiple blockchains, their liquidity pool and volume.
 
 This data app prototype demonstrates how quick and easy it is to look at blockchain and DEX activity in a clean user-friendly way. This can be built further by introducing more on-chain and relevant off-chain market data, such as ranking and popularity.
 
@@ -13,8 +13,9 @@ Built using Python, a commonly used language for Data Science and Data Engineeri
 Run Locally
 ---
  - Get [Covalent](https://www.covalenthq.com/platform/#/) API Key
- - Create secrets.toml under .streamlit and add the Covalent API key. See example in sample-secrets/secrets.toml
- - Run the blocklook data app
+ - Create secrets.toml under .streamlit and add the Covalent API key. See example in 
+   ```sample-secrets/secrets.toml```
+ - Run blocklook data app
  
     ```streamlit run blocklook-app.py```
     
