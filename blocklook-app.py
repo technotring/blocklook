@@ -9,8 +9,8 @@ import streamlit as st
 from api import get_unique_chains, get_dexes_on_chain, get_30days_volume_liquidity
 
 with st.container():
-    st.markdown(f'<h1><br>Decentralised Exchange (DEX) <br> Trade Analysis</h1> <hr/>',
-                unsafe_allow_html=True)
+    st.image("blocklook-logo.svg")
+    st.title(f'Decentralised Exchange (DEX) Trade Analysis')
     row1_1, row1_2 = st.columns((1, 1))
     with row1_1:
         chainOption = st.selectbox(
