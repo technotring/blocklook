@@ -10,15 +10,6 @@ covalent_xyk_api = 'https://api.covalenthq.com/v1'
 payload = {'key': st.secrets.blocklook.covalent_apikey}
 
 
-def __pretty_print_df(df):
-    with pd.option_context('display.max_rows', 50,
-                           'display.max_columns', None,
-                           'display.width', 1000,
-                           'display.precision', 3,
-                           'display.colheader_justify', 'center'):
-        print(df)
-
-
 @st.cache
 def __get_supported_dexes():
     dexes_res = requests.get(f'{covalent_xyk_api}/xy=k/supported_dexes/', payload).json()
